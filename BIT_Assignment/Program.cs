@@ -1,4 +1,9 @@
-﻿using System.Linq.Expressions;
+﻿using Newtonsoft.Json;
+using System.Linq.Expressions;
+using System.Runtime.Intrinsics.X86;
+using System.Text.Json.Serialization;
+using System.Xml;
+using Formatting = Newtonsoft.Json.Formatting;
 
 namespace BIT_Assignment
 {
@@ -8,32 +13,57 @@ namespace BIT_Assignment
         {   
             // ASSIGNMENT 1 
 
+           
+            // Creating a liSt of Payments
+            List<Transaction> transactions = new List<Transaction>()
+            {
+                new Transaction() {id=1, user_id=1, amount=5000},
+                new Transaction() {id=2, user_id=2, amount=6000},
+                new Transaction() {id=3, user_id=3, amount=7000}
+            };
+
             // Creating a list of Users
             List<User> users = new List<User>()
             {
-                new User() {id=1, firstname="kelechi", lastname="Randy", email="randkelz@gmail.com"},
-                new User() {id=2, firstname="Garther", lastname="Edna", email="ednagarth@gamil.com"},
-                new User() {id=3, firstname="Solomon", lastname="Parker", email="solo_p@gmail.com"}
+                new User() {id=1, firstname="kelechi", lastname="Randy", email="randkelz@gmail.com", transactions=transactions.Where(x => x.user_id == 1).ToList()},
+                new User() {id=2, firstname="Garther", lastname="Edna", email="ednagarth@gamil.com", transactions=transactions.Where(x => x.user_id == 2).ToList()},
+                new User() {id=3, firstname="Solomon", lastname="Parker", email="solo_p@gmail.com", transactions=transactions.Where(x => x.user_id == 3).ToList()}
             };
 
-            // Creating a liSt of Payments
-            List<Payment> payments = new List<Payment>()
-            {
-                new Payment() {id=1, user_id=1, amount=5000},
-                new Payment() {id=2, user_id=2, amount=6000},
-                new Payment() {id=3, user_id=3, amount=7000}
-            };
+            //var userPayments = users.Where(x => x.id == 1);
 
             // Accessing the list
-            Console.WriteLine("ASSIGNMENT 1....\n");
-            foreach (User user in users)
-            {
-                Console.WriteLine("ID: {0}, Name: {1} {2}, Email: {3}", user.id, user.firstname, user.lastname, user.email);
+            //Console.WriteLine("ASSIGNMENT 1....\n");
+            //foreach (User user in users)
+            //{
+            //    Console.WriteLine("ID: {0}, Name: {1} {2}, Email: {3} Payments:{4}", user.id, user.firstname, user.lastname, user.email);
 
-                foreach (Payment payment in payments)
+            //    foreach (Payment payment in payments)
+            //    {
+            //        if (payment.user_id == user.id)
+            //            Console.WriteLine("Payment ID: {0}, Amount Paid: {1}\n", payment.id, payment.amount);
+            //    }
+            //}
+
+            var userTransactions = users.Where(x => x.id == 1);
+            //var u = new List<User>();
+
+
+
+            var json = JsonConvert.SerializeObject(userTransactions, Formatting.Indented);
+
+            Console.WriteLine(json);
+
+            foreach (var user in userTransactions)
+            {
+                if (user.firstname == "kelechi" || user.lastname == "Randy")
                 {
-                    if (payment.user_id == user.id)
-                        Console.WriteLine("Payment ID: {0}, Amount Paid: {1}\n", payment.id, payment.amount);
+                    Console.WriteLine("First Name : " + user.firstname + " Last Name : " + user.lastname);
+                    foreach (var user2 in user.transactions.Where(y=>y.user_id==1))
+                    {
+                        Console.WriteLine("Amount : " + user2.amount + " UserId : " + user2.user_id);
+                    }
+
                 }
             }
 
